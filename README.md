@@ -1,36 +1,77 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Центр IT Карьеры — платформа обучения
 
-## Getting Started
+Next.js 16 + Prisma + PostgreSQL.
 
-First, run the development server:
+## Локальный запуск
+
+1. Создайте базу в [Neon](https://neon.tech) (бесплатный тариф подходит).
+2. Скопируйте `.env.example` в `.env` и вставьте строки подключения из Neon:
+   - **DATABASE_URL** — pooled connection (`-pooler` в хосте)
+   - **DIRECT_URL** — direct connection (без pooler)
+3. Установите зависимости и примените схему:
 
 ```bash
+npm install
+npx prisma migrate deploy
+npm run db:seed
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Откройте [http://localhost:3000](http://localhost:3000).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Демо-доступ после seed
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- Админ: `admin@career-center.ru` / `admin12345`
+- Ученик: `student@career-center.ru` / `client12345`
 
-## Learn More
+## Деплой на Vercel + Neon
 
-To learn more about Next.js, take a look at the following resources:
+### 1. База Neon
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+1. [neon.tech](https://neon.tech) → New Project → регион ближе к пользователям.
+2. В **Connection details** скопируйте:
+   - **Pooled** → `DATABASE_URL`
+   - **Direct** → `DIRECT_URL`
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### 2. Репозиторий на Vercel
 
-## Deploy on Vercel
+1. [vercel.com](https://vercel.com) → Import Git Repository → `ITschool`.
+2. **Environment Variables** (Production, Preview, Development):
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+| Переменная    | Значение              |
+|---------------|------------------------|
+| `DATABASE_URL` | pooled строка Neon    |
+| `DIRECT_URL`   | direct строка Neon    |
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+3. Deploy.
+
+При сборке Vercel выполнит `prisma migrate deploy` (создаст таблицы) и `next build`.
+
+### 3. Первичное наполнение (один раз)
+
+После успешного деплоя выполните seed **с вашего компьютера**, подставив production `DATABASE_URL` и `DIRECT_URL`:
+
+```bash
+npm run db:seed
+```
+
+Либо временно пропишите production URL в локальный `.env`, выполните seed, верните dev-URL.
+
+### 4. Обновления схемы
+
+После изменений в `prisma/schema.prisma`:
+
+```bash
+npx prisma migrate dev --name описание_изменения
+git add prisma/migrations
+git commit -m "Add migration ..."
+git push
+```
+
+Vercel при следующем деплое применит миграции автоматически.
+
+## Важно
+
+- Файл SQLite `prisma/dev.db` больше не используется — только PostgreSQL.
+- `.env` в git не попадает; на Vercel переменные задаются в панели.
+- Юридические документы лежат в `public/legal/` и раздаются как статика.
