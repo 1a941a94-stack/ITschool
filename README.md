@@ -38,18 +38,19 @@ npm run dev
 1. [vercel.com](https://vercel.com) → Import Git Repository → `ITschool`.
 2. **Environment Variables** (Production, Preview, Development):
 
-| Переменная    | Значение              |
-|---------------|------------------------|
-| `DATABASE_URL` | pooled строка Neon    |
-| `DIRECT_URL`   | direct строка Neon    |
+| Переменная     | Значение           |
+|----------------|--------------------|
+| `DATABASE_URL` | pooled строка Neon |
 
-3. Deploy.
+Используйте **Pooled connection** из Neon (хост с `-pooler`). В конце строки достаточно `?sslmode=require` — без `channel_binding`.
 
-При сборке Vercel выполнит `prisma migrate deploy` (создаст таблицы) и `next build`.
+3. Deploy (или **Redeploy** после изменения переменных).
+
+При сборке Vercel выполнит `prisma generate` и `next build`. Миграции на Neon применяются локально (`npx prisma migrate deploy`), не на Vercel.
 
 ### 3. Первичное наполнение (один раз)
 
-После успешного деплоя выполните seed **с вашего компьютера**, подставив production `DATABASE_URL` и `DIRECT_URL`:
+После успешного деплоя выполните seed **с вашего компьютера**, если база ещё пустая (у вас seed уже применён к Neon):
 
 ```bash
 npm run db:seed
@@ -68,7 +69,7 @@ git commit -m "Add migration ..."
 git push
 ```
 
-Vercel при следующем деплое применит миграции автоматически.
+Затем на своём компьютере: `npx prisma migrate deploy` с production `DATABASE_URL` в `.env`, затем push — Vercel пересоберёт приложение.
 
 ## Важно
 

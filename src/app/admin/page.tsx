@@ -7,12 +7,14 @@ import { z } from "zod";
 import { FadeIn } from "@/components/common/fade-in";
 import { PageHeading } from "@/components/common/page-heading";
 import { SectionCard } from "@/components/common/section-card";
+import { AdminConfirmDeleteForm, AdminConfirmForm } from "@/components/admin/admin-confirm-delete-form";
 import { AdminCreateCohortFields } from "@/components/admin/admin-create-cohort-fields";
 import { AdminField } from "@/components/admin/admin-field";
 import { AdminLearningDayFields } from "@/components/admin/admin-learning-day-fields";
 import { buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { requireAdmin } from "@/lib/auth";
+import { formatDefaultCohortDescription, formatDefaultCohortName } from "@/lib/cohort";
 import { getAdminData } from "@/lib/platform";
 import { prisma } from "@/lib/prisma";
 import { cn } from "@/lib/utils";
@@ -118,6 +120,8 @@ export default async function AdminPage({ searchParams }: { searchParams: Search
   const userCreated = params.userCreated === "1";
   const userError = params.userError;
   const allDays = cohorts.flatMap((cohort) => cohort.days.map((day) => ({ cohortName: cohort.name, day })));
+  const defaultCohortName = formatDefaultCohortName();
+  const defaultCohortDescription = formatDefaultCohortDescription();
 
   async function createClientAction(formData: FormData) {
     "use server";
@@ -285,8 +289,8 @@ export default async function AdminPage({ searchParams }: { searchParams: Search
     await requireAdmin();
     const parsed = cohortSchema.safeParse({
       id: String(formData.get("id") ?? "") || undefined,
-      name: String(formData.get("name") ?? "").trim(),
-      description: String(formData.get("description") ?? "").trim(),
+      name: String(formData.get("name") ?? "").trim() || formatDefaultCohortName(),
+      description: String(formData.get("description") ?? "").trim() || formatDefaultCohortDescription(),
       status: String(formData.get("status") ?? "RECRUITING"),
       currentDayNumber: String(formData.get("currentDayNumber") ?? "1"),
     });
@@ -551,7 +555,11 @@ export default async function AdminPage({ searchParams }: { searchParams: Search
           </SectionCard>
           <SectionCard className="space-y-3">
             <h3 className="text-lg font-semibold">Удалить из потока</h3>
-            <form action={unenrollClientAction} className="grid gap-2">
+            <AdminConfirmForm
+              action={unenrollClientAction}
+              confirmMessage="Удалить участника из выбранного потока?"
+              className="grid gap-2"
+            >
               <select name="userId" className="h-11 rounded-xl border border-input bg-white/80 px-3 text-sm" required>
                 <option value="">Клиент</option>
                 {users
@@ -565,7 +573,7 @@ export default async function AdminPage({ searchParams }: { searchParams: Search
               <button type="submit" className={cn(buttonVariants({ variant: "destructive" }), "h-11 rounded-xl")}>
                 Удалить из потока
               </button>
-            </form>
+            </AdminConfirmForm>
           </SectionCard>
           <SectionCard className="xl:col-span-2">
             <h3 className="mb-3 text-lg font-semibold">Редактирование пользователей</h3>
@@ -582,16 +590,18 @@ export default async function AdminPage({ searchParams }: { searchParams: Search
                         {user.enrollments.map((enrollment) => (
                           <div key={enrollment.id} className="flex items-center justify-between gap-2 rounded-lg bg-white px-2 py-1">
                             <span className="text-xs text-green-700">{enrollment.cohort.name}</span>
-                            <form action={unenrollClientAction}>
-                              <input type="hidden" name="userId" value={user.id} />
-                              <input type="hidden" name="cohortId" value={enrollment.cohortId} />
+                            <AdminConfirmDeleteForm
+                              action={unenrollClientAction}
+                              confirmMessage={`Убрать «${user.fullName}» из потока «${enrollment.cohort.name}»?`}
+                              hiddenFields={{ userId: user.id, cohortId: enrollment.cohortId }}
+                            >
                               <button
                                 type="submit"
                                 className={cn(buttonVariants({ variant: "destructive", size: "sm" }), "h-7 rounded-md px-2 text-xs")}
                               >
                                 Убрать
                               </button>
-                            </form>
+                            </AdminConfirmDeleteForm>
                           </div>
                         ))}
                       </div>
@@ -600,12 +610,16 @@ export default async function AdminPage({ searchParams }: { searchParams: Search
                     )}
                     <button type="submit" className={cn(buttonVariants({ size: "sm" }), "rounded-lg")}>Сохранить</button>
                   </form>
-                  <form action={deleteClientAction} className="mt-2">
-                    <input type="hidden" name="id" value={user.id} />
+                  <AdminConfirmDeleteForm
+                    action={deleteClientAction}
+                    confirmMessage={`Удалить пользователя «${user.fullName}»? Это действие нельзя отменить.`}
+                    hiddenFields={{ id: user.id }}
+                    className="mt-2"
+                  >
                     <button type="submit" className={cn(buttonVariants({ variant: "destructive", size: "sm" }), "rounded-lg")}>
                       Удалить пользователя
                     </button>
-                  </form>
+                  </AdminConfirmDeleteForm>
                 </div>
               ))}
             </div>
@@ -617,8 +631,8 @@ export default async function AdminPage({ searchParams }: { searchParams: Search
         <SectionCard className="space-y-4">
           <h3 className="text-lg font-semibold">Потоки</h3>
           <form action={upsertCohortAction} className="grid gap-2 md:grid-cols-2">
-            <Input name="name" placeholder="Название потока" className="h-10 rounded-lg" required />
-            <Input name="description" placeholder="Описание" className="h-10 rounded-lg" required />
+            <Input name="name" defaultValue={defaultCohortName} placeholder="Название потока" className="h-10 rounded-lg" required />
+            <Input name="description" defaultValue={defaultCohortDescription} placeholder="Описание" className="h-10 rounded-lg" required />
             <select name="status" className="h-10 rounded-lg border border-input bg-white px-3 text-sm">
               <option value="RECRUITING">Набор</option>
               <option value="CURRENT">Текущий</option>
@@ -642,12 +656,16 @@ export default async function AdminPage({ searchParams }: { searchParams: Search
                     <button type="submit" className={cn(buttonVariants({ size: "sm" }), "rounded-lg md:col-span-2")}>Сохранить поток</button>
                   </div>
                 </form>
-                <form action={deleteCohortAction} className="mt-2">
-                  <input type="hidden" name="id" value={cohort.id} />
+                <AdminConfirmDeleteForm
+                  action={deleteCohortAction}
+                  confirmMessage={`Удалить поток «${cohort.name}» со всеми днями, новостями и участниками?`}
+                  hiddenFields={{ id: cohort.id }}
+                  className="mt-2"
+                >
                   <button type="submit" className={cn(buttonVariants({ variant: "destructive", size: "sm" }), "rounded-lg")}>
                     Удалить поток
                   </button>
-                </form>
+                </AdminConfirmDeleteForm>
               </div>
             ))}
           </div>
@@ -673,12 +691,16 @@ export default async function AdminPage({ searchParams }: { searchParams: Search
           {cohorts.map((cohort) => (
             <details key={cohort.id} className="rounded-xl bg-white/80 p-3" open={cohort.status === "CURRENT"}>
               <summary className="cursor-pointer text-sm font-semibold">{cohort.name}</summary>
-              <form action={deleteCohortAction} className="mt-2">
-                <input type="hidden" name="id" value={cohort.id} />
+              <AdminConfirmDeleteForm
+                action={deleteCohortAction}
+                confirmMessage={`Удалить поток «${cohort.name}» со всеми днями, новостями и участниками?`}
+                hiddenFields={{ id: cohort.id }}
+                className="mt-2"
+              >
                 <button type="submit" className={cn(buttonVariants({ variant: "destructive", size: "sm" }), "rounded-lg")}>
                   Удалить поток
                 </button>
-              </form>
+              </AdminConfirmDeleteForm>
               <div className="mt-3 space-y-2">
                 {cohort.days.map((day) => (
                   <form key={day.id} action={upsertDayAction} className="rounded-lg bg-white p-2">
@@ -766,12 +788,16 @@ export default async function AdminPage({ searchParams }: { searchParams: Search
                                 </button>
                               </div>
                             </form>
-                            <form action={deleteScheduleItemAction} className="mt-2">
-                              <input type="hidden" name="id" value={slot.id} />
+                            <AdminConfirmDeleteForm
+                              action={deleteScheduleItemAction}
+                              confirmMessage={`Удалить слот «${slot.title}»?`}
+                              hiddenFields={{ id: slot.id }}
+                              className="mt-2"
+                            >
                               <button type="submit" className={cn(buttonVariants({ variant: "destructive", size: "sm" }), "rounded-lg")}>
                                 Удалить слот
                               </button>
-                            </form>
+                            </AdminConfirmDeleteForm>
                           </div>
                         ))}
                       </div>
@@ -825,12 +851,16 @@ export default async function AdminPage({ searchParams }: { searchParams: Search
                             Сохранить
                           </button>
                         </form>
-                        <form action={deleteNewsAction} className="mt-2">
-                          <input type="hidden" name="id" value={item.id} />
+                        <AdminConfirmDeleteForm
+                          action={deleteNewsAction}
+                          confirmMessage={`Удалить новость «${item.title}»?`}
+                          hiddenFields={{ id: item.id }}
+                          className="mt-2"
+                        >
                           <button type="submit" className={cn(buttonVariants({ variant: "destructive", size: "sm" }), "rounded-lg")}>
                             Удалить
                           </button>
-                        </form>
+                        </AdminConfirmDeleteForm>
                       </div>
                     ))}
                     {!cohortNews.length ? (
@@ -967,12 +997,16 @@ export default async function AdminPage({ searchParams }: { searchParams: Search
                             </div>
                           </div>
                         </form>
-                        <form action={deleteMaterialAction} className="mt-2">
-                          <input type="hidden" name="id" value={material.id} />
+                        <AdminConfirmDeleteForm
+                          action={deleteMaterialAction}
+                          confirmMessage={`Удалить материал «${material.title}»?`}
+                          hiddenFields={{ id: material.id }}
+                          className="mt-2"
+                        >
                           <button type="submit" className={cn(buttonVariants({ variant: "destructive", size: "sm" }), "rounded-lg")}>
                             Удалить материал
                           </button>
-                        </form>
+                        </AdminConfirmDeleteForm>
                       </div>
                     ))}
                   </div>
@@ -1012,12 +1046,16 @@ export default async function AdminPage({ searchParams }: { searchParams: Search
                     <button type="submit" className={cn(buttonVariants({ size: "sm" }), "rounded-lg md:col-span-4")}>Сохранить</button>
                   </div>
                 </form>
-                <form action={deleteLibraryItemAction} className="mt-2">
-                  <input type="hidden" name="id" value={item.id} />
+                <AdminConfirmDeleteForm
+                  action={deleteLibraryItemAction}
+                  confirmMessage={`Удалить «${item.title}» из библиотеки?`}
+                  hiddenFields={{ id: item.id }}
+                  className="mt-2"
+                >
                   <button type="submit" className={cn(buttonVariants({ variant: "destructive", size: "sm" }), "rounded-lg")}>
                     Удалить из библиотеки
                   </button>
-                </form>
+                </AdminConfirmDeleteForm>
               </div>
             ))}
           </div>
@@ -1101,12 +1139,16 @@ export default async function AdminPage({ searchParams }: { searchParams: Search
                     </div>
                   </div>
                 </form>
-                <form action={deleteDocumentAction} className="mt-2">
-                  <input type="hidden" name="id" value={item.id} />
+                <AdminConfirmDeleteForm
+                  action={deleteDocumentAction}
+                  confirmMessage={`Удалить документ «${item.title}»?`}
+                  hiddenFields={{ id: item.id }}
+                  className="mt-2"
+                >
                   <button type="submit" className={cn(buttonVariants({ variant: "destructive", size: "sm" }), "rounded-lg")}>
                     Удалить документ
                   </button>
-                </form>
+                </AdminConfirmDeleteForm>
               </div>
             ))}
           </div>

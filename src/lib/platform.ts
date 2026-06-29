@@ -76,10 +76,15 @@ export async function getCurrentScheduleForUser(userId: string) {
 }
 
 export async function getLatestNewsForUser(userId: string, limit = 10) {
-  const enrollment = await getClientEnrollment(userId);
-  if (!enrollment) return [];
+  const enrollments = await prisma.enrollment.findMany({
+    where: { userId },
+    select: { cohortId: true },
+  });
+  if (!enrollments.length) return [];
+
+  const cohortIds = enrollments.map((item) => item.cohortId);
   return prisma.news.findMany({
-    where: { cohortId: enrollment.cohort.id },
+    where: { cohortId: { in: cohortIds } },
     orderBy: { publishedAt: "desc" },
     take: limit,
   });
