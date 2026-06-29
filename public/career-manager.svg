@@ -1,0 +1,8 @@
+<svg width="560" height="560" viewBox="0 0 560 560" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="560" height="560" rx="88" fill="#F3F7FF"/>
+  <circle cx="280" cy="215" r="112" fill="#DBEAFE"/>
+  <path d="M280 338C195.7 338 127 406.7 127 491V560H433V491C433 406.7 364.3 338 280 338Z" fill="#BFDBFE"/>
+  <circle cx="280" cy="200" r="79" fill="#93C5FD"/>
+  <rect x="171" y="89" width="218" height="52" rx="26" fill="#2563EB"/>
+  <text x="280" y="123" text-anchor="middle" fill="white" font-family="Arial, sans-serif" font-size="22" font-weight="700">MAX</text>
+</svg>
