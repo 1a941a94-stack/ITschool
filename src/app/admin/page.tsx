@@ -14,7 +14,7 @@ import { AdminLearningDayFields } from "@/components/admin/admin-learning-day-fi
 import { buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { requireAdmin } from "@/lib/auth";
-import { formatDefaultCohortDescription, formatDefaultCohortName } from "@/lib/cohort";
+import { formatDefaultCohortDescription, formatDefaultCohortName, buildDefaultCohortDays } from "@/lib/cohort";
 import { getAdminData } from "@/lib/platform";
 import { prisma } from "@/lib/prisma";
 import { cn } from "@/lib/utils";
@@ -318,6 +318,9 @@ export default async function AdminPage({ searchParams }: { searchParams: Search
           description: parsed.data.description,
           status: parsed.data.status as CohortStatus,
           currentDayNumber: parsed.data.currentDayNumber,
+          days: {
+            create: buildDefaultCohortDays(),
+          },
         },
       });
     }
