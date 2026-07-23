@@ -52,6 +52,17 @@ export async function getClientEnrollment(userId: string) {
   return enrollments.find((item) => item.cohort.status === CohortStatus.RECRUITING) ?? enrollments[0] ?? null;
 }
 
+type CohortUnlockSource = {
+  status: CohortStatus;
+  currentDayNumber: number;
+};
+
+/** Previous days stay open as the cohort advances; completed cohorts unlock everything. */
+export function isLearningDayUnlocked(cohort: CohortUnlockSource, dayNumber: number) {
+  if (cohort.status === CohortStatus.COMPLETED) return true;
+  return dayNumber <= cohort.currentDayNumber;
+}
+
 export async function getClientCurrentDay(userId: string) {
   const enrollment = await getClientEnrollment(userId);
   if (!enrollment) return null;
@@ -65,14 +76,19 @@ export async function getClientDays(userId: string) {
   return enrollment.cohort.days.map((day) => ({
     ...day,
     isCurrent: day.dayNumber === enrollment.cohort.currentDayNumber,
-    isUnlocked: day.dayNumber <= enrollment.cohort.currentDayNumber,
+    isUnlocked: isLearningDayUnlocked(enrollment.cohort, day.dayNumber),
   }));
 }
 
-export async function getCurrentScheduleForUser(userId: string) {
+export async function getUnlockedScheduleForUser(userId: string) {
   const enrollment = await getClientEnrollment(userId);
-  if (!enrollment) return null;
-  return enrollment.cohort.days.find((day) => day.dayNumber === enrollment.cohort.currentDayNumber) ?? null;
+  if (!enrollment) return [];
+  return enrollment.cohort.days
+    .filter((day) => isLearningDayUnlocked(enrollment.cohort, day.dayNumber))
+    .map((day) => ({
+      ...day,
+      isCurrent: day.dayNumber === enrollment.cohort.currentDayNumber,
+    }));
 }
 
 export async function getLatestNewsForUser(userId: string, limit = 10) {

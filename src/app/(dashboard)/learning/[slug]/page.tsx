@@ -9,7 +9,7 @@ import { CareerManagerCard } from "@/components/learning/career-manager-card";
 import { TrainerMaterialFeed } from "@/components/learning/trainer-material-feed";
 import { buttonVariants } from "@/components/ui/button";
 import { requireUser } from "@/lib/auth";
-import { getClientEnrollment, materialKindLabel, parseAgenda } from "@/lib/platform";
+import { getClientEnrollment, isLearningDayUnlocked, materialKindLabel, parseAgenda } from "@/lib/platform";
 import { prisma } from "@/lib/prisma";
 import { cn } from "@/lib/utils";
 
@@ -29,8 +29,7 @@ export default async function LessonPage({ params }: LessonPageProps) {
     notFound();
   }
 
-  const unlocked = lesson.dayNumber <= enrollment.cohort.currentDayNumber;
-  if (!unlocked) {
+  if (!isLearningDayUnlocked(enrollment.cohort, lesson.dayNumber)) {
     notFound();
   }
 
