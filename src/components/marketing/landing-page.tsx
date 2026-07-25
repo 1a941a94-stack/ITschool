@@ -23,7 +23,7 @@ type LandingPageProps = {
 
 const stats = [
   { value: "1000+", label: "выпускников центра" },
-  { value: "4 дня", label: "интенсивной практики" },
+  { value: "видео", label: "встречи с клиентами" },
   { value: "100%", label: "онлайн-формат" },
   { value: "с нуля", label: "до выхода к работодателям" },
 ];
@@ -34,8 +34,8 @@ const roleSteps = [
     text: "Понимаете задачи клиента, его цели и критерии выбора IT-решения.",
   },
   {
-    title: "Онлайн-встреча",
-    text: "Проводите структурированный вводный урок в удобном для клиента формате.",
+    title: "Видео-встреча",
+    text: "Проводите структурированную продающую встречу в удобном для клиента онлайн-формате.",
   },
   {
     title: "Демонстрация продукта",
@@ -67,29 +67,6 @@ const benefits = [
     icon: Users,
     title: "Сопровождение карьеры",
     text: "Резюме, подготовка к собеседованиям и выход к партнёрской сети работодателей.",
-  },
-];
-
-const programDays = [
-  {
-    day: "01",
-    title: "Основы профессии МВУ",
-    text: "Погружение в воронку продаж, этапы работы с клиентом, психологию покупателя и ключевые метрики эффективности в IT-сегменте.",
-  },
-  {
-    day: "02",
-    title: "Техники продаж и коммуникации",
-    text: "Скрипты, установление контакта, выявление потребностей, презентация продукта и работа с возражениями в реальном времени.",
-  },
-  {
-    day: "03",
-    title: "Практика и разбор кейсов",
-    text: "Интенсивная отработка на кейсах IT-компаний: переговоры, типичные ошибки и способы их предотвращения.",
-  },
-  {
-    day: "04",
-    title: "Трудоустройство и карьера",
-    text: "Профессиональное резюме, подготовка к собеседованиям, доступ к базе работодателей и рекомендации по росту дохода.",
   },
 ];
 
@@ -163,10 +140,7 @@ export function LandingPage({ isAuthenticated, isAdmin }: LandingPageProps) {
             <a href="#profession" className="hidden rounded-full px-3 py-2 text-sm text-blue-100/80 transition hover:text-white lg:inline">
               О профессии
             </a>
-            <a href="#program" className="hidden rounded-full px-3 py-2 text-sm text-blue-100/80 transition hover:text-white md:inline">
-              Программа
-            </a>
-            <a href="#results" className="hidden rounded-full px-3 py-2 text-sm text-blue-100/80 transition hover:text-white lg:inline">
+            <a href="#results" className="hidden rounded-full px-3 py-2 text-sm text-blue-100/80 transition hover:text-white md:inline">
               Результаты
             </a>
             <a href="#faq" className="hidden rounded-full px-3 py-2 text-sm text-blue-100/80 transition hover:text-white sm:inline">
@@ -198,7 +172,7 @@ export function LandingPage({ isAuthenticated, isAdmin }: LandingPageProps) {
           </FadeIn>
           <FadeIn delay={0.14}>
             <p className="mt-5 max-w-xl text-base leading-relaxed text-blue-100/75 sm:text-lg">
-              Ведущий образовательный центр по подготовке менеджеров вводного урока в IT: практика с тренером,
+              Ведущий образовательный центр по подготовке менеджеров по продажам в видео-встрече: практика с тренером,
               удалённый формат и сопровождение до трудоустройства.
             </p>
           </FadeIn>
@@ -240,12 +214,12 @@ export function LandingPage({ isAuthenticated, isAdmin }: LandingPageProps) {
           <FadeIn>
             <p className="text-xs font-semibold tracking-[0.22em] text-blue-600 uppercase">О профессии</p>
             <h2 className="mt-3 max-w-3xl font-[family-name:var(--font-landing-display)] text-3xl tracking-tight sm:text-4xl">
-              Менеджер вводного урока — точка входа в IT-продажи
+              Менеджер по продажам в видео-встрече — точка входа в IT-продажи
             </h2>
             <p className="mt-5 max-w-3xl text-base leading-relaxed text-slate-600 sm:text-lg">
-              МВУ проводит онлайн-встречи с клиентами, демонстрирует IT-продукты и помогает принять решение о покупке.
-              Компании инвестируют в технологии каждый день — без сильного первого контакта сделки не случаются. Вы —
-              тот, кто открывает этот путь.
+              Специалист проводит видео-встречи с клиентами, демонстрирует IT-продукты и помогает принять решение о
+              покупке. Компании инвестируют в технологии каждый день — без сильного первого контакта сделки не
+              случаются. Вы — тот, кто открывает этот путь.
             </p>
           </FadeIn>
           <div className="mt-14 grid gap-10 md:grid-cols-2 lg:grid-cols-4">
@@ -269,7 +243,7 @@ export function LandingPage({ isAuthenticated, isAdmin }: LandingPageProps) {
       <section className="bg-[#f5f7fb] px-5 py-20 sm:px-8 sm:py-24">
         <div className="mx-auto max-w-6xl">
           <FadeIn>
-            <p className="text-xs font-semibold tracking-[0.22em] text-blue-600 uppercase">Почему МВУ</p>
+            <p className="text-xs font-semibold tracking-[0.22em] text-blue-600 uppercase">Почему эта профессия</p>
             <h2 className="mt-3 max-w-3xl font-[family-name:var(--font-landing-display)] text-3xl tracking-tight sm:text-4xl">
               Профессия с свободой формата и понятным ростом
             </h2>
@@ -288,39 +262,6 @@ export function LandingPage({ isAuthenticated, isAdmin }: LandingPageProps) {
                 </article>
               </FadeIn>
             ))}
-          </div>
-        </div>
-      </section>
-
-      <section id="program" className="px-5 py-20 sm:px-8 sm:py-24">
-        <div className="mx-auto max-w-6xl">
-          <FadeIn>
-            <p className="text-xs font-semibold tracking-[0.22em] text-blue-600 uppercase">Программа</p>
-            <h2 className="mt-3 max-w-3xl font-[family-name:var(--font-landing-display)] text-3xl tracking-tight sm:text-4xl">
-              Четыре дня интенсивного практического обучения
-            </h2>
-            <p className="mt-4 max-w-2xl text-base leading-relaxed text-slate-600">
-              Полностью онлайн. Живые занятия с тренером. Интерактивные практики и разбор реальных кейсов — без
-              растянутых курсов «на полгода теории».
-            </p>
-          </FadeIn>
-          <div className="mt-14 space-y-0">
-            {programDays.map((item, index) => (
-              <FadeIn key={item.day} delay={0.04 * (index + 1)}>
-                <article className="grid gap-4 border-t border-slate-200 py-8 md:grid-cols-[120px_1fr] md:gap-10">
-                  <p className="font-[family-name:var(--font-landing-display)] text-4xl tracking-tight text-blue-600">
-                    {item.day}
-                  </p>
-                  <div>
-                    <h3 className="font-[family-name:var(--font-landing-display)] text-2xl tracking-tight">
-                      {item.title}
-                    </h3>
-                    <p className="mt-3 max-w-3xl text-sm leading-relaxed text-slate-600 sm:text-base">{item.text}</p>
-                  </div>
-                </article>
-              </FadeIn>
-            ))}
-            <div className="border-t border-slate-200" />
           </div>
         </div>
       </section>
@@ -433,7 +374,7 @@ export function LandingPage({ isAuthenticated, isAdmin }: LandingPageProps) {
               <p className="font-[family-name:var(--font-landing-display)] text-lg text-slate-900">Центр IT Карьеры</p>
             </div>
             <p className="mt-4 text-sm leading-relaxed text-slate-600">
-              Образовательная платформа подготовки менеджеров вводного урока в IT-сегменте. Обучение, практика и
+              Образовательная платформа подготовки менеджеров по продажам в видео-встрече. Обучение, практика и
               карьерное сопровождение в одном контуре.
             </p>
             <p className="mt-5 text-xs leading-relaxed text-slate-500">
@@ -448,9 +389,6 @@ export function LandingPage({ isAuthenticated, isAdmin }: LandingPageProps) {
               <p className="text-xs font-semibold tracking-[0.16em] text-slate-400 uppercase">Навигация</p>
               <a href="#profession" className="block text-slate-700 hover:text-blue-600">
                 О профессии
-              </a>
-              <a href="#program" className="block text-slate-700 hover:text-blue-600">
-                Программа
               </a>
               <a href="#results" className="block text-slate-700 hover:text-blue-600">
                 Результаты
