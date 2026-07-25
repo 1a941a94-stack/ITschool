@@ -45,7 +45,7 @@ export default async function LearningPage() {
                 </div>
                 {day.isUnlocked ? (
                   <Link
-                    href={`/learning/${day.slug}`}
+                    href={`/app/learning/${day.slug}`}
                     className={cn(buttonVariants(), "rounded-xl")}
                   >
                     {day.isCurrent ? "Текущий день" : "Открытый день"} <ChevronRight size={16} />

@@ -46,7 +46,7 @@ export default async function HomePage() {
                 )}
               </div>
               {currentLesson ? (
-                <Link href={`/learning/${currentLesson.slug}`} className={cn(buttonVariants(), "rounded-xl")}>
+                <Link href={`/app/learning/${currentLesson.slug}`} className={cn(buttonVariants(), "rounded-xl")}>
                   Перейти
                 </Link>
               ) : null}
@@ -62,9 +62,9 @@ export default async function HomePage() {
             </p>
             <div className="space-y-2">
               {[
-                { href: "/learning", title: "Открыть обучение" },
-                { href: "/schedule", title: "Посмотреть расписание" },
-                { href: "/documents", title: "Перейти к документам" },
+                { href: "/app/learning", title: "Открыть обучение" },
+                { href: "/app/schedule", title: "Посмотреть расписание" },
+                { href: "/app/documents", title: "Перейти к документам" },
               ].map((item) => (
                 <Link
                   key={item.href}

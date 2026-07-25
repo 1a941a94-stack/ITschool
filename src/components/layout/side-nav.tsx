@@ -31,14 +31,14 @@ export function SideNav() {
   return (
     <aside className="glass hidden w-[272px] shrink-0 rounded-[28px] border border-white/70 p-4 shadow-[0_20px_40px_-34px_rgba(37,99,235,0.55)] lg:flex lg:flex-col">
       <div className="mb-8 rounded-2xl bg-white/80 p-4">
-        <Link href="/" className="block">
+        <Link href="/app" className="block">
           <SiteLogo className="mx-auto" />
         </Link>
         <p className="mt-3 text-center text-sm font-medium text-zinc-700">Личный кабинет</p>
       </div>
       <nav className="space-y-2">
         {navItems.map((item) => {
-          const isActive = item.href === "/" ? pathname === "/" : pathname.startsWith(item.href);
+          const isActive = item.href === "/app" ? pathname === "/app" : pathname.startsWith(item.href);
           const Icon = iconMap[item.icon as keyof typeof iconMap];
 
           return (

@@ -1,4 +1,5 @@
 import { UserRole } from "@prisma/client";
+import Link from "next/link";
 import { redirect } from "next/navigation";
 import { z } from "zod";
 
@@ -19,7 +20,7 @@ export default async function LoginPage({ searchParams }: { searchParams: Search
   const user = await getCurrentUser();
   if (user) {
     if (user.role === UserRole.ADMIN) redirect("/admin");
-    redirect("/");
+    redirect("/app");
   }
 
   const params = await searchParams;
@@ -44,7 +45,7 @@ export default async function LoginPage({ searchParams }: { searchParams: Search
     if (account.role === UserRole.ADMIN) {
       redirect("/admin");
     }
-    redirect("/");
+    redirect("/app");
   }
 
   return (
@@ -64,6 +65,11 @@ export default async function LoginPage({ searchParams }: { searchParams: Search
               <h1 className="mt-0 text-3xl font-semibold tracking-tight text-zinc-900 lg:mt-3">
                 Вход в личный кабинет
               </h1>
+              <p className="mt-3 text-sm text-zinc-500">
+                <Link href="/" className="font-medium text-blue-600 hover:underline">
+                  ← На главную
+                </Link>
+              </p>
             </div>
 
             {params.error ? (

@@ -15,7 +15,7 @@ export default async function AcceptTermsPage({ searchParams }: { searchParams: 
     redirect("/admin");
   }
   if (user.legalAcceptedAt) {
-    redirect("/");
+    redirect("/app");
   }
 
   const params = await searchParams;

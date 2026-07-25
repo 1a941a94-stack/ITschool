@@ -26,17 +26,17 @@ export async function changePasswordAction(formData: FormData) {
   });
 
   if (!parsed.success) {
-    redirect("/profile?passwordError=validation");
+    redirect("/app/profile?passwordError=validation");
   }
 
   const account = await prisma.user.findUnique({ where: { id: user.id } });
   if (!account) {
-    redirect("/profile?passwordError=validation");
+    redirect("/app/profile?passwordError=validation");
   }
 
   const isCurrentValid = await compare(parsed.data.currentPassword, account.passwordHash);
   if (!isCurrentValid) {
-    redirect("/profile?passwordError=current");
+    redirect("/app/profile?passwordError=current");
   }
 
   const passwordHash = await hash(parsed.data.newPassword, 10);
@@ -45,5 +45,5 @@ export async function changePasswordAction(formData: FormData) {
     data: { passwordHash },
   });
 
-  redirect("/profile?passwordUpdated=1");
+  redirect("/app/profile?passwordUpdated=1");
 }

@@ -12,7 +12,7 @@ export function MobileNav() {
   return (
     <div className="glass sticky top-0 z-20 mb-6 flex gap-2 overflow-x-auto rounded-2xl border border-white/70 p-2 lg:hidden">
       {navItems.map((item) => {
-        const isActive = item.href === "/" ? pathname === "/" : pathname.startsWith(item.href);
+        const isActive = item.href === "/app" ? pathname === "/app" : pathname.startsWith(item.href);
         return (
           <Link
             key={item.href}

@@ -12,7 +12,7 @@ export async function acceptLegalAction(formData: FormData) {
     redirect("/admin");
   }
   if (user.legalAcceptedAt) {
-    redirect("/");
+    redirect("/app");
   }
 
   const acceptOffer = formData.get("acceptOffer") === "on";
@@ -26,5 +26,5 @@ export async function acceptLegalAction(formData: FormData) {
     data: { legalAcceptedAt: new Date() },
   });
 
-  redirect("/");
+  redirect("/app");
 }

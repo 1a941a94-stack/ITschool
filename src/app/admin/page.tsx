@@ -104,10 +104,11 @@ const managerSchema = z.object({
 function revalidateAllPaths() {
   revalidatePath("/admin");
   revalidatePath("/");
-  revalidatePath("/learning");
-  revalidatePath("/schedule");
-  revalidatePath("/library");
-  revalidatePath("/documents");
+  revalidatePath("/app");
+  revalidatePath("/app/learning");
+  revalidatePath("/app/schedule");
+  revalidatePath("/app/library");
+  revalidatePath("/app/documents");
 }
 
 type SearchParams = Promise<{ tab?: string; userCreated?: string; userError?: string }>;

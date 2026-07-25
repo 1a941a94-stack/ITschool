@@ -9,7 +9,7 @@ type SiteLogoProps = {
 export function SiteLogo({ className }: SiteLogoProps) {
   return (
     <Image
-      src="/logo-it.png"
+      src="/icon.png"
       alt="Центр IT Карьеры"
       width={200}
       height={200}
